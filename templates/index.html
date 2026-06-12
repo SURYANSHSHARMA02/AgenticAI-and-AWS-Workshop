@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Resume Skill Matcher</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static',
+          filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Resume Skill Matcher</h1>
+
+    <form action="/analyze"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <label>
+            Job Description
+        </label>
+
+        <textarea
+            name="jd"
+            placeholder="Paste Job Description Here..."
+            required>
+        </textarea>
+
+        <label>
+            Upload Resumes
+        </label>
+
+        <input
+            type="file"
+            name="resumes"
+            multiple
+            accept=".pdf"
+            required>
+
+        <button type="submit">
+            Analyze Resumes
+        </button>
+
+    </form>
+
+    {% if results %}
+
+        <h2>Results</h2>
+
+        {% for r in results %}
+
+        <div class="card">
+
+            <h3>
+                {{ r.name }}
+            </h3>
+
+            <div class="matched">
+
+                <h4>
+                    Matched Skills
+                </h4>
+
+                <ul>
+
+                    {% for skill in r.matched %}
+
+                    <li>
+                        {{ skill }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            <div class="missing">
+
+                <h4>
+                    Missing Skills
+                </h4>
+
+                <ul>
+
+                    {% for skill in r.missing %}
+
+                    <li>
+                        {{ skill }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

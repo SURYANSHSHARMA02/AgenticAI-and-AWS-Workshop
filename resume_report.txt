@@ -1,0 +1,17 @@
+============================================================
+RESUME ANALYSIS REPORT
+============================================================
+
+
+Resume : Black and White Clean Professional A4 Resume.pdf
+----------------------------------------
+
+Matched Skills:
+✓ java
+
+Missing Skills:
+✗ git
+✗ github
+✗ javascript
+
+------------------------------------------------------------
