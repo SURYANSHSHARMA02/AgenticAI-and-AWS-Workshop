@@ -1,112 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
-    <title>Resume Skill Matcher</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static',
-          filename='style.css') }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Skill Matcher - AI-Powered Resume Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-
-<div class="container">
-
-    <h1>Resume Skill Matcher</h1>
-
-    <form action="/analyze"
-          method="POST"
-          enctype="multipart/form-data">
-
-        <label>
-            Job Description
-        </label>
-
-        <textarea
-            name="jd"
-            placeholder="Paste Job Description Here..."
-            required>
-        </textarea>
-
-        <label>
-            Upload Resumes
-        </label>
-
-        <input
-            type="file"
-            name="resumes"
-            multiple
-            accept=".pdf"
-            required>
-
-        <button type="submit">
-            Analyze Resumes
-        </button>
-
-    </form>
-
-    {% if results %}
-
-        <h2>Results</h2>
-
-        {% for r in results %}
-
-        <div class="card">
-
-            <h3>
-                {{ r.name }}
-            </h3>
-
-            <div class="matched">
-
-                <h4>
-                    Matched Skills
-                </h4>
-
-                <ul>
-
-                    {% for skill in r.matched %}
-
-                    <li>
-                        {{ skill }}
-                    </li>
-
-                    {% endfor %}
-
-                </ul>
-
+    <div class="stars"></div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-brain"></i> Resume Skill Matcher</h1>
+                <p>AI-Powered Resume Analysis Tool</p>
             </div>
+        </header>
 
-            <div class="missing">
+        <!-- Main Form -->
+        <section class="form-section">
+            <div class="form-card">
+                <h2><i class="fas fa-edit"></i> Analyze Resumes</h2>
+                
+                <form action="/analyze" method="POST" enctype="multipart/form-data" class="main-form">
+                    
+                    <!-- Job Description Input -->
+                    <div class="form-group">
+                        <label for="jd">
+                            <i class="fas fa-briefcase"></i> Job Description
+                        </label>
+                        <textarea
+                            id="jd"
+                            name="jd"
+                            placeholder="Paste the job description here... We'll analyze resumes against these requirements."
+                            required
+                            minlength="10">
+                        </textarea>
+                        <span class="form-hint">Paste the complete job description to get accurate skill matching</span>
+                    </div>
 
-                <h4>
-                    Missing Skills
-                </h4>
+                    <!-- File Upload -->
+                    <div class="form-group">
+                        <label for="resumes">
+                            <i class="fas fa-file-pdf"></i> Upload Resumes (PDF)
+                        </label>
+                        <div class="file-upload-wrapper">
+                            <input
+                                id="resumes"
+                                type="file"
+                                name="resumes"
+                                multiple
+                                accept=".pdf"
+                                required>
+                            <div class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload or drag and drop</p>
+                                <span>PDF files only</span>
+                            </div>
+                        </div>
+                        <div id="file-list" class="file-list"></div>
+                    </div>
 
-                <ul>
-
-                    {% for skill in r.missing %}
-
-                    <li>
-                        {{ skill }}
-                    </li>
-
-                    {% endfor %}
-
-                </ul>
-
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-magic"></i> Analyze Resumes
+                    </button>
+                </form>
             </div>
+        </section>
 
-        </div>
+        <!-- Results Section -->
+        {% if results %}
+        <section class="results-section">
+            <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+            <div class="results-grid">
+                {% for r in results %}
+                <div class="result-card">
+                    <div class="result-header">
+                        <h3>
+                            <i class="fas fa-file"></i> {{ r.name }}
+                        </h3>
+                        <div class="match-score">
+                            <span class="score-badge">
+                                {{ ((r.matched|length / (r.matched|length + r.missing|length)) * 100)|int }}% Match
+                            </span>
+                        </div>
+                    </div>
 
-        {% endfor %}
+                    <div class="skills-wrapper">
+                        <!-- Matched Skills -->
+                        <div class="skills-column matched-column">
+                            <div class="skills-header">
+                                <h4><i class="fas fa-check-circle"></i> Matched Skills</h4>
+                                <span class="count">{{ r.matched|length }}</span>
+                            </div>
+                            <ul class="skills-list">
+                                {% for skill in r.matched %}
+                                <li class="skill-badge matched-skill">
+                                    <i class="fas fa-check"></i> {{ skill }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
 
-    {% endif %}
+                        <!-- Missing Skills -->
+                        <div class="skills-column missing-column">
+                            <div class="skills-header">
+                                <h4><i class="fas fa-exclamation-circle"></i> Missing Skills</h4>
+                                <span class="count">{{ r.missing|length }}</span>
+                            </div>
+                            <ul class="skills-list">
+                                {% for skill in r.missing %}
+                                <li class="skill-badge missing-skill">
+                                    <i class="fas fa-times"></i> {{ skill }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
 
-</div>
+    <script>
+        // File upload handling
+        const fileInput = document.getElementById('resumes');
+        const fileList = document.getElementById('file-list');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                fileList.innerHTML = '';
+                Array.from(this.files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `<i class="fas fa-file-pdf"></i> ${file.name}`;
+                    fileList.appendChild(fileItem);
+                });
+            });
 
+            // Drag and drop
+            const wrapper = document.querySelector('.file-upload-wrapper');
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => wrapper.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => wrapper.classList.remove('dragover'), false);
+            });
+
+            wrapper.addEventListener('drop', (e) => {
+                fileInput.files = e.dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
+            }, false);
+        }
+    </script>
 </body>
+
 </html>
