@@ -2,7 +2,13 @@ from flask import Flask, render_template, request
 from PyPDF2 import PdfReader
 import os
 
-app = Flask(__name__)
+# Configure app with explicit static folder path
+app = Flask(
+    __name__,
+    static_folder='static',
+    static_url_path='/static',
+    template_folder='templates'
+)
 
 # =====================================
 # SKILLS DATABASE
